@@ -7,10 +7,10 @@ $(function () {
         this.printerState = parameters[2];
         this.confirmation = undefined;
 
-        this.onAfterBinding = function () {};
+        this.onAfterBinding = function () { };
         this.onBeforeBinding = function () {
             this.confirmation = $("#confirmation");
-            this.settings = this.allSettings.settings.plugins.simpleemergencystop;
+            this.settings = this.allSettings.settings.plugins.magneticfieldscanner;
         };
 
         this.click = function () {
@@ -25,14 +25,14 @@ $(function () {
 
         this.sendCommand = function () {
             $.ajax({
-                url: API_BASEURL + "plugin/simpleemergencystop",
+                url: API_BASEURL + "plugin/magneticfieldscanner",
                 type: "POST",
                 dataType: "json",
                 data: JSON.stringify({
                     command: "emergencyStop"
                 }),
                 contentType: "application/json; charset=UTF-8",
-                success: function (data, status) {}
+                success: function (data, status) { }
             });
             this.confirmation.modal("hide");
 
@@ -40,11 +40,11 @@ $(function () {
 
         this.hasControlPermition = function () {
             let user = this.loginState.currentUser();
-            if(user.permissions !== undefined){
+            if (user.permissions !== undefined) {
                 return user.permissions.includes("control") || user.needs.role.includes("control");
             }
             else return true;
-            
+
         }
 
 
@@ -53,7 +53,7 @@ $(function () {
         };
 
         this.can_send_command = function () {
-            return this.loginState.isUser() && this.hasControlPermition() && this.printerState.isOperational() ;
+            return this.loginState.isUser() && this.hasControlPermition() && this.printerState.isOperational();
         };
 
         this.little_button_css = function () {
@@ -70,6 +70,6 @@ $(function () {
 
         ["settingsViewModel", "loginStateViewModel", "printerStateViewModel"],
 
-        ["#navbar_plugin_simpleemergencystop"]
+        ["#navbar_plugin_magneticfieldscanner"]
     ]);
 });
