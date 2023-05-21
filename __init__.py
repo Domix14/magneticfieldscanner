@@ -6,7 +6,6 @@ import subprocess
 import pyvisa
 
 import octoprint.plugin
-
 from .scripts.my_script import foo
 from .scripts.my_script import R_and_S_tuning
 
@@ -21,8 +20,6 @@ class MagneticFieldScannerPlugin(
 ):
     def __init__(self):
         self.chartGCODE = ""
-        R_and_S_tuning()
-        tablica = []
 
     def get_settings_defaults(self):
         return dict(
@@ -39,6 +36,7 @@ class MagneticFieldScannerPlugin(
 
     def on_after_startup(self):
         self.chartGCODE = self._settings.get(["chartGCODE"])
+        R_and_S_tuning()
 
     def get_template_vars(self):
         return dict(chart="google.com")
