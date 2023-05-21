@@ -3,10 +3,12 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import os
 import subprocess
+import pyvisa
 
 import octoprint.plugin
 
 from .scripts.my_script import foo
+from .scripts.my_script import R_and_S_tuning
 
 
 class MagneticFieldScannerPlugin(
@@ -19,6 +21,8 @@ class MagneticFieldScannerPlugin(
 ):
     def __init__(self):
         self.chartGCODE = ""
+        R_and_S_tuning()
+        tablica = []
 
     def get_settings_defaults(self):
         return dict(
