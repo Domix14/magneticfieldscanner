@@ -1,13 +1,12 @@
 # coding=utf-8
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import os
-import subprocess
-import pyvisa
+import logging
 
 import octoprint.plugin
+
 from .scripts.my_script import foo
-from .scripts.my_script import R_and_S_tuning
+from .scripts.scanner import Scanner
 
 
 class MagneticFieldScannerPlugin(
@@ -20,6 +19,11 @@ class MagneticFieldScannerPlugin(
 ):
     def __init__(self):
         self.chartGCODE = ""
+        self.scanner = None
+        self.position_x = None
+        self.position_y = None
+        self.position_z = None
+        self.data = []
 
     def get_settings_defaults(self):
         return dict(
@@ -36,7 +40,7 @@ class MagneticFieldScannerPlugin(
 
     def on_after_startup(self):
         self.chartGCODE = self._settings.get(["chartGCODE"])
-        R_and_S_tuning()
+        self.scanner = Scanner(13.56, 10)
 
     def get_template_vars(self):
         return dict(chart="google.com")
@@ -78,6 +82,28 @@ class MagneticFieldScannerPlugin(
             )
         )
 
+    def hook(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
+        logging.warning("------------")
+        return_cmd = cmd
+        if self.position_x is not None and self.position_y is not None and self.position_z is not None:
+            freq, value = self.scanner.measure()
+            self.data.append({'x': self.position_x, 'y': self.position_y, 'freq': freq, 'value': value})
+            logging.warning(self.data)
+            return_cmd += " ; " + str(self.data)
+
+        if gcode == "G0" or gcode == "G1" or gcode == "G2":
+            for word in cmd.split():
+                if word.startswith('X'):
+                    self.position_x = float(word[1:])
+                elif word.startswith('Y'):
+                    self.position_y = float(word[1:])
+                elif word.startswith('Z'):
+                    self.position_z = float(word[1:])
+        
+        return [return_cmd]
+
+        
+
 
 # If you want your plugin to be registered within OctoPrint under a different name than what you defined in setup.py
 # ("OctoPrint-PluginSkeleton"), you may define that here. Same goes for the other metadata derived from setup.py that
@@ -92,5 +118,6 @@ def __plugin_load__():
 
     global __plugin_hooks__
     __plugin_hooks__ = {
-        "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information
+        "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
+        "octoprint.comm.protocol.gcode.queuing": __plugin_implementation__.hook,
     }
