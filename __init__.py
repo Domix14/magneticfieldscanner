@@ -4,8 +4,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import logging
 
 import octoprint.plugin
-
-from .scripts.my_script import foo
+import threading
+from .scripts.plot_chart import Plot_3D
 from .scripts.scanner import Scanner
 
 
@@ -35,8 +35,8 @@ class MagneticFieldScannerPlugin(
 
     def on_event(self, event, payload):
         if event == octoprint.events.Events.ALERT:
-            # subprocess.call(["python", r".\.venv\Lib\site-packages\octoprint_showchart\scripts\my_script.py"])
-            foo()
+            thread = threading.Thread(target=Plot_3D().start())
+            thread.start()
 
     def on_after_startup(self):
         self.chartGCODE = self._settings.get(["chartGCODE"])
