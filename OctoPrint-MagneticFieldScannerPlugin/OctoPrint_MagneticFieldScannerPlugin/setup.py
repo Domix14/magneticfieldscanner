@@ -27,7 +27,7 @@ plugin_author = "TODO"
 plugin_author_email = "todo@example.com"
 
 # The plugin's homepage URL. Can be overwritten within OctoPrint's internal data via __plugin_url__ in the plugin module
-plugin_url = "https://github.com/Domix14/magneticfieldscanner/tree/main/OctoPrint-MyNewPlugin/OctoPrint-MyNewPlugin"
+plugin_url = "https://github.com/Domix14/magneticfieldscanner/tree/main/OctoPrint-MagneticFieldScannerPlugin/OctoPrint_MagneticFieldScannerPlugin.zip"
 
 # The plugin's license. Can be overwritten within OctoPrint's internal data via __plugin_license__ in the plugin module
 plugin_license = "AGPLv3"
