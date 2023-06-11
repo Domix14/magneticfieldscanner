@@ -1,1 +1,24 @@
-Hello world!
+<h3>{{ _('Magnetic Field Scanner') }}</h3>
+
+<form class="form-horizontal" onsubmit="return false;">
+    <label class="control-label" for="settings-ip">IP Address</label>
+    <div class="control-group">
+        <div class="controls">
+              <input data-bind="value: settings.plugins.magneticfieldscanner.scanner_ip" type="text" class="input-block-level id="settings-ip">
+        </div>
+    </div>
+
+    <label class="control-label" for="settings-freq">Center frequency</label>
+    <div class="control-group">
+        <div class="controls">
+              <input data-bind="value: settings.plugins.magneticfieldscanner.scanner_freq" type="text" class="input-block-level id="settings-freq">
+        </div>
+    </div>
+
+    <label class="control-label" for="settings-window">Frequency window</label>
+    <div class="control-group">
+        <div class="controls">
+              <input data-bind="value: settings.plugins.magneticfieldscanner.scanner_window" type="text" class="input-block-level id="settings-window">
+        </div>
+    </div>
+</form>

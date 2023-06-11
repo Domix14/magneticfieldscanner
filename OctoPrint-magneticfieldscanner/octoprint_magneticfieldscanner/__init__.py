@@ -18,97 +18,112 @@ class MagneticFieldScannerPlugin(
     octoprint.plugin.EventHandlerPlugin,
 ):
     def __init__(self):
-        self.chartGCODE = ""
         self.scanner = None
         self.position_x = None
         self.position_y = None
         self.position_z = None
         self.data = []
-
-    def get_settings_defaults(self):
-        return dict(
-            chart="google.com",
-            chartGCODE="M300",
-            confirmationDialog=False,
-            big_button=True,
-        )
-
-    def on_event(self, event, payload):
-        if event == octoprint.events.Events.ALERT:
-            thread = threading.Thread(target=Plot_3D().start())
-            thread.start()
+        self.counter = 0
 
     def on_after_startup(self):
-        self.chartGCODE = self._settings.get(["chartGCODE"])
-        self.scanner = Scanner(13.56, 10)
+        self.scanner = Scanner()
 
-    def get_template_vars(self):
-        return dict(chart="google.com")
+    def get_settings_defaults(self):
+        return {"scanner_freq": 123, "scanner_window": 13, "scanner_ip": "192.168.0.254"}
 
     def get_template_configs(self):
-        return [
-            dict(type="settings", custom_bindings=False),
-            dict(type="tab", custom_bindings=False),
-        ]
+        return [{"type": "settings", "custom_bindings": False}]
 
     def get_api_commands(self):
-        return dict(emergencyStop=[])
+        return dict(show_chart=[], connect=[])
 
     def on_api_command(self, command, data):
-        # check if there is a : in line
-        find_this = ":"
-        if find_this in str(self.chartGCODE):
-            # if : found then, split, then for each:
-            gcode_list = str(self.chartGCODE).split(":")
-            for gcode in gcode_list:
-                self._printer.commands(gcode)
-        else:
-            self._printer.commands(self.chartGCODE)
+        if command == "connect":
+            self.connect_scanner()
+        elif command == "show_chart":
+            thread = threading.Thread(target=Plot_3D().start(self.data))
+            thread.start()
+        elif command == "delete_data":
+            self.data = []
+            self._ping("points_update", len(self.data))
+        elif command == "export_data":
+            pass
 
     def get_assets(self):
         return dict(
-            js=["js/chartshow.js"],
-            css=["css/chartshow.css", "css/fontawesome.all.min.css"],
+            js=["js/magneticfieldscanner.js"],
+            css=["css/magneticfieldscanner.css", "css/fontawesome.all.min.css"],
         )
 
-    # Softwareupdate hook
+    def connect_scanner(self):
+        ip = self._settings.get(["scanner_ip"])
+        freq = self._settings.get_float(["scanner_freq"])
+        window = self._settings.get_float(["scanner_window"])
+        result = self.scanner.connect(ip, freq, window)
+        self._ping("connection_update", result)
 
     def get_update_information(self):
         return dict(
-            simpleschoemergencystop=dict(
-                displayName="Show Chart",
+            magneticfieldscanner=dict(
+                displayName="Magnetic Field Scanner",
                 displayVersion=self._plugin_version,
                 current=self._plugin_version,
             )
         )
 
-    def hook(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
-        logging.warning("------------")
+    def hook(
+        self,
+        comm_instance,
+        phase,
+        cmd,
+        cmd_type,
+        gcode,
+        subcode=None,
+        tags=None,
+        *args,
+        **kwargs,
+    ):
+        if not self.scanner.connected:
+            self._ping("connection_update", False)
+            return [return_cmd]
+
         return_cmd = cmd
-        if self.position_x is not None and self.position_y is not None and self.position_z is not None:
+        if (
+            self.position_x is not None
+            and self.position_y is not None
+            and self.position_z is not None
+        ):
             freq, value = self.scanner.measure()
-            self.data.append({'x': self.position_x, 'y': self.position_y,'Z':self.position_z, 'freq': freq, 'value': value})
-            logging.warning(self.data)
-            return_cmd += f" ; x: {self.position_x} y: {self.position_y} Z: {self.position_z} freq: {freq} value: {value}"
+            self.data.append(
+                {
+                    "x": self.position_x,
+                    "y": self.position_y,
+                    "Z": self.position_z,
+                    "freq": freq,
+                    "value": value,
+                }
+            )
+            self._ping("points_update", len(self.data))
 
         if gcode == "G0" or gcode == "G1" or gcode == "G2":
             for word in cmd.split():
-                if word.startswith('X'):
+                if word.startswith("X"):
                     self.position_x = float(word[1:])
-                elif word.startswith('Y'):
+                elif word.startswith("Y"):
                     self.position_y = float(word[1:])
-                elif word.startswith('Z'):
+                elif word.startswith("Z"):
                     self.position_z = float(word[1:])
-        
-        return [return_cmd]
 
-        
+    def _ping(self, command, value):
+        self._plugin_manager.send_plugin_message(
+            self._identifier, dict(type=command, value=value)
+        )
 
 
 # If you want your plugin to be registered within OctoPrint under a different name than what you defined in setup.py
 # ("OctoPrint-PluginSkeleton"), you may define that here. Same goes for the other metadata derived from setup.py that
 # can be overwritten via __plugin_xyz__ control properties. See the documentation for that.
-__plugin_name__ = "Chart Show"
+__plugin_name__ = "Magnetic Field Scanner"
 __plugin_pythoncompat__ = ">=2.7,<4"
 
 
