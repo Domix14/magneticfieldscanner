@@ -8,26 +8,14 @@ class Plot_3D:
         ...
 
     def start(self, data):
-        # Przykładowe dane
-        points = []
-        center = (20 - 1) / 2  # Środek sześcianu
-        for x in range(25):
-            for y in range(25):
-                for z in range(25):
-                    distance = max(abs(x - center), abs(y - center), abs(z - center))
-                    value = (
-                        20 - distance - 1
-                    )  # Ustalanie wartości w oparciu o odległość od środka
-                    points.append((x, y, z, value))
-
-        df = pd.DataFrame(points, columns=["X", "Y", "Z", "Value"])
+        df = pd.DataFrame(data)
         self.print_3D(df)
 
     def print_3D(self, raw_data):
         step_offset = 8
-        df = raw_data.sort_values("Z")
-        color_min = min(df["Value"])
-        color_max = max(df["Value"])
+        df = raw_data.sort_values("z")
+        color_min = min(df["value"])
+        color_max = max(df["value"])
 
         # Tworzenie wykresu Scatter3d
         fig = go.Figure()
@@ -36,13 +24,13 @@ class Plot_3D:
             df_slice = df.head(step).copy()
             fig.add_trace(
                 go.Scatter3d(
-                    x=df_slice["X"],
-                    y=df_slice["Y"],
-                    z=df_slice["Z"],
+                    x=df_slice["x"],
+                    y=df_slice["y"],
+                    z=df_slice["z"],
                     mode="markers",
                     marker=dict(
                         colorscale="Viridis",
-                        color=df_slice["Value"],
+                        color=df_slice["value"],
                         opacity=0.4,
                         cmin=color_min,
                         cmax=color_max,
@@ -82,5 +70,3 @@ class Plot_3D:
         )
         fig.show()
 
-
-# Plot_3D().start()
