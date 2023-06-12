@@ -14,7 +14,8 @@ $(function () {
         this.onBeforeBinding = function () {
             this.confirmation = $("#confirmation");
             this.settings = this.allSettings.settings
-            console.log(this.settings)
+
+            plot();
         };
 
         this.sendCommand = function (command) {

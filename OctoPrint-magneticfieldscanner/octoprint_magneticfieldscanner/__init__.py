@@ -51,7 +51,7 @@ class MagneticFieldScannerPlugin(
 
     def get_assets(self):
         return dict(
-            js=["js/magneticfieldscanner.js"],
+            js=["js/magneticfieldscanner.js", "js/chart.js", "external/plotly.js"],
             css=["css/magneticfieldscanner.css", "css/fontawesome.all.min.css"],
         )
 
@@ -98,7 +98,7 @@ class MagneticFieldScannerPlugin(
                 {
                     "x": self.position_x,
                     "y": self.position_y,
-                    "Z": self.position_z,
+                    "z": self.position_z,
                     "freq": freq,
                     "value": value,
                 }
