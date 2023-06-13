@@ -103,7 +103,7 @@ class MagneticFieldScannerPlugin(
             )
         )
 
-    def hook(
+def hook(
         self,
         comm_instance,
         phase,
@@ -137,6 +137,19 @@ class MagneticFieldScannerPlugin(
             )
             self._ping("points_update", len(self.data))
 
+            if not return_cmd.startswith("M109") and not return_cmd.startswith("M190") and not return_cmd.startswith("M104") and not return_cmd.startswith("M140"):
+                # Split the line into individual words
+                words = return_cmd.split()
+                
+                # Remove any words that start with "E"
+                words = [word for word in words if not word.startswith("E")]
+                # Remove any words that start with "M104"
+                words = [word for word in words if not word.startswith("M104")]
+                # Remove any words that start with "M140"
+                words = [word for word in words if not word.startswith("M140")]
+
+                return_cmd = " ".join(words) + " ; " + str(self.data)
+
         if gcode == "G0" or gcode == "G1" or gcode == "G2":
             for word in cmd.split():
                 if word.startswith("X"):
@@ -146,10 +159,7 @@ class MagneticFieldScannerPlugin(
                 elif word.startswith("Z"):
                     self.position_z = float(word[1:])
 
-    def _ping(self, command, value):
-        self._plugin_manager.send_plugin_message(
-            self._identifier, dict(type=command, value=value)
-        )
+        return [return_cmd]
 
 
 # If you want your plugin to be registered within OctoPrint under a different name than what you defined in setup.py
