@@ -2,7 +2,8 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import logging
-
+import flask
+import json
 import octoprint.plugin
 import threading
 from .plot_chart import Plot_3D
@@ -48,6 +49,9 @@ class MagneticFieldScannerPlugin(
             self._ping("points_update", len(self.data))
         elif command == "export_data":
             pass
+    
+    def on_api_get(self, request):
+        return flask.Response(json.dumps(self.data),  mimetype='application/json')
 
     def get_assets(self):
         return dict(

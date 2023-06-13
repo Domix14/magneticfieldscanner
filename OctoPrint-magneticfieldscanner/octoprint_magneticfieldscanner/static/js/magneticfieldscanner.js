@@ -15,7 +15,7 @@ $(function () {
             this.confirmation = $("#confirmation");
             this.settings = this.allSettings.settings
 
-            plot();
+            // plot();
         };
 
         this.sendCommand = function (command) {
@@ -28,6 +28,21 @@ $(function () {
                 }),
                 contentType: "application/json; charset=UTF-8",
                 success: function (data, status) { }
+            });
+            // this.confirmation.modal("hide");
+
+        };
+
+        this.sendGetCommand = function (command) {
+            $.ajax({
+                url: API_BASEURL + "plugin/magneticfieldscanner",
+                type: "GET",
+                dataType: "json",
+                data: JSON.stringify({
+                    command: command
+                }),
+                contentType: "application/json; charset=UTF-8",
+                success: function (data, status) { refreshPlot(data) }
             });
             // this.confirmation.modal("hide");
 

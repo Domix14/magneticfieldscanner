@@ -1,25 +1,10 @@
+function refreshPlot(data) {
+    plot(data);
+}
+
 function plot(rawdata) {
 
-//    Example
-
-    var center = (20 - 1) / 2; // Środek sześcianu
-    var points = [];
-    var rawdata = [];
-    for (var x = 0; x < 25; x++) {
-        for (var y = 0; y < 25; y++) {
-            for (var z = 0; z < 25; z++) {
-                var distance = Math.max(Math.abs(x - center), Math.abs(y - center), Math.abs(z - center));
-                var value = 20 - distance - 1; // Ustalanie wartości w oparciu o odległość od środka
-                rawdata.push({
-                    x: x,
-                    y: y,
-                    z: z,
-                    value: value
-                });
-            }
-        }
-    }
-
+    //    Example
     var layout = {
         width: 600,
         height: 500,
@@ -91,33 +76,33 @@ function plot(rawdata) {
     const percentages = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
 
     for (let i = 0; i < percentages.length; i++) {
-      const percentage = percentages[i];
+        const percentage = percentages[i];
 
-      const frame = {
-        name: percentage,
-        data: [{
-          x: df_slice.map(point => point.x),
-          y: df_slice.map(point => point.y),
-          z: points.slice(0, points.length * percentage).map(point => point.z),
-          mode: 'markers',
-          marker: {
-            size: 3,
-            color: points.map(point => point.value),
-            colorscale: 'Viridis',
-            cmin: Math.min(...points.map(point => point.value)),
-            cmax: Math.max(...points.map(point => point.value)),
-            colorbar: { title: 'Magnetic field strength [mT]' }
-          },
-          type: 'scatter3d'
-        }]
-      };
-    frames.push(frame);
+        const frame = {
+            name: percentage,
+            data: [{
+                x: df_slice.map(point => point.x),
+                y: df_slice.map(point => point.y),
+                z: points.slice(0, points.length * percentage).map(point => point.z),
+                mode: 'markers',
+                marker: {
+                    size: 3,
+                    color: points.map(point => point.value),
+                    colorscale: 'Viridis',
+                    cmin: Math.min(...points.map(point => point.value)),
+                    cmax: Math.max(...points.map(point => point.value)),
+                    colorbar: { title: 'Magnetic field strength [mT]' }
+                },
+                type: 'scatter3d'
+            }]
+        };
+        frames.push(frame);
     }
 
     const steps = percentages.map(percentage => ({
-      label: percentage,
-      method: 'animate',
-      args: [[percentage], { mode: 'immediate' }]
+        label: percentage,
+        method: 'animate',
+        args: [[percentage], { mode: 'immediate' }]
     }));
 
 
@@ -125,24 +110,47 @@ function plot(rawdata) {
     Plotly.newPlot('myDiv', {
         data: [trace],
         layout: {
-            sliders:[{
-              pad: {t: 30},
-              x: 0.05,
-              len: 0.95,
-              currentvalue: {
-                xanchor: 'right',
-                prefix: 'Percentages: ',
-                font: {
-                  color: '#888',
-                  size: 10
-                }
-              },
-              transition: {duration: 500},
-              steps: steps
+            sliders: [{
+                pad: { t: 30 },
+                x: 0.05,
+                len: 0.95,
+                currentvalue: {
+                    xanchor: 'right',
+                    prefix: 'Percentages: ',
+                    font: {
+                        color: '#888',
+                        size: 10
+                    }
+                },
+                transition: { duration: 500 },
+                steps: steps
             }],
-          },
-          frames: frames
+        },
+        frames: frames
     })
 }
 
-plot();
+function generateTestData() {
+    var center = (20 - 1) / 2; // Środek sześcianu
+    var points = [];
+    var testData = [];
+    for (var x = 0; x < 25; x++) {
+        for (var y = 0; y < 25; y++) {
+            for (var z = 0; z < 25; z++) {
+                var distance = Math.max(Math.abs(x - center), Math.abs(y - center), Math.abs(z - center));
+                var value = 20 - distance - 1; // Ustalanie wartości w oparciu o odległość od środka
+                testData.push({
+                    x: x,
+                    y: y,
+                    z: z,
+                    value: value
+                });
+            }
+        }
+    }
+    return testData
+}
+
+
+
+plot(generateTestData());
