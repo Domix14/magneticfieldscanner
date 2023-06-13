@@ -23,8 +23,9 @@ $(function () {
         };
 
         this.deleteData = function () {
-            this.sendCommand('connect')
+            this.sendCommand('delete_data')
             this.data = []
+            this.points(0)
             refreshPlot(this.data);
         }
 
@@ -44,8 +45,6 @@ $(function () {
                 contentType: "application/json; charset=UTF-8",
                 success: function (data, status) { }
             });
-            // this.confirmation.modal("hide");
-
         };
 
         this.getData = function (command) {
