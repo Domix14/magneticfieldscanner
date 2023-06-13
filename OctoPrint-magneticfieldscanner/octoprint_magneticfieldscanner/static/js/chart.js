@@ -140,13 +140,13 @@ function plot(rawdata) {
                 cmin: 0,
                 cmax: 0,
                 colorbar: { title: 'Magnetic field strength [mT]' }
-                 },
+            },
             type: 'scatter3d'
         };
 
         Plotly.newPlot('myDiv', {
             data: [data]
-            });
+        });
     }
 }
 

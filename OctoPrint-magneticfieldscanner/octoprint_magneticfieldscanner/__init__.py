@@ -4,10 +4,32 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import logging
 import flask
 import json
+import io
+import csv
 import octoprint.plugin
 import threading
+import pandas as pd
 from .plot_chart import Plot_3D
 from .scanner import Scanner
+
+from octoprint.server import (  # noqa: F401
+    app,
+)
+
+
+@app.route("/api/plugin/magneticfieldscanner/export_data")
+def export_data():
+    self = __plugin_implementation__
+    si = io.StringIO()
+    if len(self.data) > 0:
+        # cw = csv.writer(si)
+        dict_writer = csv.DictWriter(si, self.data[0].keys())
+        dict_writer.writeheader()
+        dict_writer.writerows(self.data)
+    output = flask.make_response(si.getvalue())
+    output.headers["Content-Disposition"] = "attachment; filename=export.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
 
 
 class MagneticFieldScannerPlugin(
@@ -30,28 +52,28 @@ class MagneticFieldScannerPlugin(
         self.scanner = Scanner()
 
     def get_settings_defaults(self):
-        return {"scanner_freq": 123, "scanner_window": 13, "scanner_ip": "192.168.0.254"}
+        return {
+            "scanner_freq": 123,
+            "scanner_window": 13,
+            "scanner_ip": "192.168.0.254",
+            "connected": False,
+            "points_count": 0,
+        }
 
     def get_template_configs(self):
         return [{"type": "settings", "custom_bindings": False}]
 
     def get_api_commands(self):
-        return dict(show_chart=[], connect=[])
+        return dict(delete_data=[], connect=[])
 
     def on_api_command(self, command, data):
         if command == "connect":
             self.connect_scanner()
-        elif command == "show_chart":
-            thread = threading.Thread(target=Plot_3D().start(self.data))
-            thread.start()
         elif command == "delete_data":
-            self.data = []
-            self._ping("points_update", len(self.data))
-        elif command == "export_data":
-            pass
-    
+            self.delete_data()
+
     def on_api_get(self, request):
-        return flask.Response(json.dumps(self.data),  mimetype='application/json')
+        return flask.Response(json.dumps(self.data), mimetype="application/json")
 
     def get_assets(self):
         return dict(
@@ -59,11 +81,17 @@ class MagneticFieldScannerPlugin(
             css=["css/magneticfieldscanner.css", "css/fontawesome.all.min.css"],
         )
 
+    def delete_data(self):
+        self.data = []
+        self._settings.set_int(["points_count"], 0)
+        self._ping("points_update", 0)
+
     def connect_scanner(self):
         ip = self._settings.get(["scanner_ip"])
         freq = self._settings.get_float(["scanner_freq"])
         window = self._settings.get_float(["scanner_window"])
         result = self.scanner.connect(ip, freq, window)
+        self._settings.set_boolean(["connected"], result)
         self._ping("connection_update", result)
 
     def get_update_information(self):
