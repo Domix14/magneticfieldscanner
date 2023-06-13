@@ -2,23 +2,23 @@ function plot(rawdata) {
 
 //    Example
 
-//    var center = (20 - 1) / 2; // Środek sześcianu
-//    var points = [];
-//    var rawdata = [];
-//    for (var x = 0; x < 25; x++) {
-//        for (var y = 0; y < 25; y++) {
-//            for (var z = 0; z < 25; z++) {
-//                var distance = Math.max(Math.abs(x - center), Math.abs(y - center), Math.abs(z - center));
-//                var value = 20 - distance - 1; // Ustalanie wartości w oparciu o odległość od środka
-//                rawdata.push({
-//                    x: x,
-//                    y: y,
-//                    z: z,
-//                    value: value
-//                });
-//            }
-//        }
-//    }
+    var center = (20 - 1) / 2; // Środek sześcianu
+    var points = [];
+    var rawdata = [];
+    for (var x = 0; x < 25; x++) {
+        for (var y = 0; y < 25; y++) {
+            for (var z = 0; z < 25; z++) {
+                var distance = Math.max(Math.abs(x - center), Math.abs(y - center), Math.abs(z - center));
+                var value = 20 - distance - 1; // Ustalanie wartości w oparciu o odległość od środka
+                rawdata.push({
+                    x: x,
+                    y: y,
+                    z: z,
+                    value: value
+                });
+            }
+        }
+    }
 
     var layout = {
         width: 600,
