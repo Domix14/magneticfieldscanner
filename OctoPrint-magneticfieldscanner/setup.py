@@ -18,10 +18,10 @@ plugin_version = "0.1"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
-plugin_description = "TODO"
+plugin_description = "Allows to scan magnetic field in 3D space"
 
 # The plugin's author. Can be overwritten within OctoPrint's internal data via __plugin_author__ in the plugin module
-plugin_author = "TODO"
+plugin_author = "D. Jaworski, P. Fraczkiewicz, L. Piasecki"
 
 # The plugin's author's mail address.
 plugin_author_email = "todo@example.com"
