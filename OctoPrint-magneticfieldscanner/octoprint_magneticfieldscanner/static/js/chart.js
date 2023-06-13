@@ -130,9 +130,17 @@ function plot(rawdata) {
     } else {
         // Kod dla braku danych
         var data = {
-            x: 0,
-            y: 0,
-            z: 0,
+            x: [0],
+            y: [0],
+            z: [0],
+            mode: 'markers',
+            marker: {
+                size: 3,
+                colorscale: 'Viridis',
+                cmin: 0,
+                cmax: 0,
+                colorbar: { title: 'Magnetic field strength [mT]' }
+                 },
             type: 'scatter3d'
         };
 
@@ -165,5 +173,5 @@ function generateTestData() {
 
 
 empty_data = []
-//plot(empty_data);
-plot(generateTestData());
+plot(empty_data);
+//plot(generateTestData());
