@@ -103,7 +103,7 @@ class MagneticFieldScannerPlugin(
             )
         )
 
-def hook(
+    def hook(
         self,
         comm_instance,
         phase,
@@ -115,11 +115,12 @@ def hook(
         *args,
         **kwargs,
     ):
+        return_cmd = cmd
+
         if not self.scanner.connected:
             self._ping("connection_update", False)
             return [return_cmd]
 
-        return_cmd = cmd
         if (
             self.position_x is not None
             and self.position_y is not None
@@ -137,10 +138,15 @@ def hook(
             )
             self._ping("points_update", len(self.data))
 
-            if not return_cmd.startswith("M109") and not return_cmd.startswith("M190") and not return_cmd.startswith("M104") and not return_cmd.startswith("M140"):
+            if (
+                not return_cmd.startswith("M109")
+                and not return_cmd.startswith("M190")
+                and not return_cmd.startswith("M104")
+                and not return_cmd.startswith("M140")
+            ):
                 # Split the line into individual words
                 words = return_cmd.split()
-                
+
                 # Remove any words that start with "E"
                 words = [word for word in words if not word.startswith("E")]
                 # Remove any words that start with "M104"
