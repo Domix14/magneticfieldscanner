@@ -41,15 +41,12 @@ class MagneticFieldScannerPlugin(
     octoprint.plugin.EventHandlerPlugin,
 ):
     def __init__(self):
-        self.scanner = None
+        self.scanner = Scanner()
         self.position_x = None
         self.position_y = None
         self.position_z = None
         self.data = []
         self.counter = 0
-
-    def on_after_startup(self):
-        self.scanner = Scanner()
 
     def get_settings_defaults(self):
         return {
