@@ -61,6 +61,7 @@ $(function () {
         };
 
         this.updateChart = function () {
+            getData();
             refreshPlot(this.data)
         }
 

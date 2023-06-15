@@ -41,15 +41,12 @@ class MagneticFieldScannerPlugin(
     octoprint.plugin.EventHandlerPlugin,
 ):
     def __init__(self):
-        self.scanner = None
+        self.scanner = Scanner()
         self.position_x = None
         self.position_y = None
         self.position_z = None
         self.data = []
         self.counter = 0
-
-    def on_after_startup(self):
-        self.scanner = Scanner()
 
     def get_settings_defaults(self):
         return {
@@ -138,23 +135,11 @@ class MagneticFieldScannerPlugin(
             )
             self._ping("points_update", len(self.data))
 
-            if (
-                not return_cmd.startswith("M109")
-                and not return_cmd.startswith("M190")
-                and not return_cmd.startswith("M104")
-                and not return_cmd.startswith("M140")
-            ):
-                # Split the line into individual words
-                words = return_cmd.split()
-
-                # Remove any words that start with "E"
-                words = [word for word in words if not word.startswith("E")]
-                # Remove any words that start with "M104"
-                words = [word for word in words if not word.startswith("M104")]
-                # Remove any words that start with "M140"
-                words = [word for word in words if not word.startswith("M140")]
-
-                return_cmd = " ".join(words) + " ; " + str(self.data)
+        words = return_cmd.split()
+        # Remove words based on specified conditions
+        words = [word for word in words if not word.startswith(("E", "M104", "M109", "M140", "M190"))]
+        return_cmd = " ".join(words)+ " ; " + "ja tu byl"
+            
 
         if gcode == "G0" or gcode == "G1" or gcode == "G2":
             for word in cmd.split():
@@ -164,9 +149,13 @@ class MagneticFieldScannerPlugin(
                     self.position_y = float(word[1:])
                 elif word.startswith("Z"):
                     self.position_z = float(word[1:])
-
         return [return_cmd]
-
+        
+    
+    def _ping(self, command, value):
+        self._plugin_manager.send_plugin_message(
+            self._identifier, dict(type=command, value=value)
+        )
 
 # If you want your plugin to be registered within OctoPrint under a different name than what you defined in setup.py
 # ("OctoPrint-PluginSkeleton"), you may define that here. Same goes for the other metadata derived from setup.py that
@@ -184,3 +173,5 @@ def __plugin_load__():
         "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
         "octoprint.comm.protocol.gcode.queuing": __plugin_implementation__.hook,
     }
+
+ 
