@@ -19,7 +19,7 @@ $(function () {
             this.connected(this.settings.plugins.magneticfieldscanner.connected())
             this.points(this.settings.plugins.magneticfieldscanner.points_count())
 
-            this.updateChart();
+            // this.updateChart();
         };
 
         this.deleteData = function () {
@@ -47,22 +47,17 @@ $(function () {
             });
         };
 
-        this.getData = function (command) {
+        this.updateChart = function () {
             $.ajax({
                 url: API_BASEURL + "/plugin/magneticfieldscanner",
                 type: "GET",
                 dataType: "json",
-                data: JSON.stringify({
-                    command: command
-                }),
                 contentType: "application/json; charset=UTF-8",
-                success: function (data, status) { this.data = data }
+                success: (data, status) => {
+                    this.data = data
+                    refreshPlot(this.data)
+                }
             });
-        };
-
-        this.updateChart = function () {
-            getData();
-            refreshPlot(this.data)
         }
 
         this.onDataUpdaterPluginMessage = function (plugin, data) {
