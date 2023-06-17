@@ -5,6 +5,9 @@ function refreshPlot(data) {
 function updateGraph(rawdata) {
     if (rawdata.length !== 0) {
         var points = rawdata.slice().sort((a, b) => a.z - b.z);
+        var minValue = Math.min(...points.map(point => point.value));
+        var maxValue = Math.max(...points.map(point => point.value));
+        
         var trace = {
             x: points.map(point => point.x),
             y: points.map(point => point.y),
@@ -14,15 +17,16 @@ function updateGraph(rawdata) {
                 size: 3,
                 color: points.map(point => point.value),
                 colorscale: "Rainbow",
-                cmin: Math.min(...points.map(point => point.value)),
-                cmax: Math.max(...points.map(point => point.value)),
-                colorbar: { title: "Magnetic field strength [dBm]" }
+                cmin: minValue,
+                cmax: maxValue,
+                colorbar: {
+                    title: "Magnetic field strength [dBm]",                   
+                }
             },
             type: 'scatter3d'
         };
 
-        Plotly.react('myDiv', [trace]);
-    }
+        Plotly.react('myDiv', [trace]);    }
 }
 
 function plot(rawdata) {

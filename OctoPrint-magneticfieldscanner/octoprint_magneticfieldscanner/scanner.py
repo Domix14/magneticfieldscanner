@@ -33,7 +33,7 @@ class Scanner:
                 f"SENS:FREQ:STOP {self.freq + self.window}MHz"
             )  # set the stop frequency
             # define an S21 measurement named "MyMeasurement"
-            self.instr.write("SENS:BWID {selfRBW} Hz")
+            self.instr.write(f"SENS:BWID {self.RBW} Hz")
             self.instr.write('CALC:PAR:DEF:EXT "MyMeasurement",s12')
             self.instr.write("CALC:MARK:AOFF")
             self.instr.write("CALC:MARK1:STAT ON")
@@ -52,6 +52,7 @@ class Scanner:
     def measure(self):
         self.instr.write("CALC:TRAC1:CLE")
         self.instr.write("DISP:WIND1:TRAC1:Y:AUTO ON")
+        
         #self.instr.write("INITiate:CONTinuous OFF")  # wyłącz ciągły pomiar
         self.instr.write("CALC:MARK1:MAX")
         self.instr.write("DISP:TRAC:MODE MAXH")
