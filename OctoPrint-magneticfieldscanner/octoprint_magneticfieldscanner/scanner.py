@@ -20,19 +20,25 @@ class Scanner:
             self.ip = ip
             self.instr = self.rm.open_resource(f"TCPIP0::{self.ip}::INSTR")
 
-            # # Select the measurement parameters you want to measure
-            self.instr.write(
-                f"SENS:FREQ:START {self.freq - self.window}MHz"
-            )  # set the start frequency
-            self.instr.write(
-                f"SENS:FREQ:STOP {self.freq - self.window}MHz"
-            )  # set the stop frequency
-            # define an S21 measurement named "MyMeasurement"
-            self.instr.write('CALC:PAR:DEF:EXT "MyMeasurement",Z21')
+            # Set the frequency span
+            self.instr.write(f"FREQ:SPAN {self.window}Hz")
+
+            # Set the center frequency
+            self.instr.write(f"FREQ:CENT {self.freq}Hz")
+
+            # Set the measurement type to S21
+            self.instr.write("CALC:PAR:DEF:EXT 'MyMeasurement', 'S21'")
+
+            # Turn off all markers
             self.instr.write("CALC:MARK:AOFF")
+
+            # Turn on Marker 1 and set it to the peak
             self.instr.write("CALC:MARK1:STAT ON")
-            # # Set the analyzer to continuous measurement mode
+            self.instr.write("CALC:MARK1:MAX")
+
+            # Set the analyzer to continuous measurement mode
             self.instr.write("INITiate:CONTinuous ON")  # turn on continuous measurement
+
             self.connected = True
         except Exception as err:
             logging.error(f"Error while initializing PyVisa: {err}")
