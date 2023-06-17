@@ -55,6 +55,7 @@ class MagneticFieldScannerPlugin(
             "scanner_ip": "192.168.0.254",
             "connected": False,
             "points_count": 0,
+            "ref_level_offset":40,
         }
 
     def get_template_configs(self):
@@ -87,7 +88,8 @@ class MagneticFieldScannerPlugin(
         ip = self._settings.get(["scanner_ip"])
         freq = self._settings.get_float(["scanner_freq"])
         window = self._settings.get_float(["scanner_window"])
-        result = self.scanner.connect(ip, freq, window)
+        ref_level_offset =40
+        result = self.scanner.connect(ip, freq, window,ref_level_offset)
         self._settings.set_boolean(["connected"], result)
         self._ping("connection_update", result)
 

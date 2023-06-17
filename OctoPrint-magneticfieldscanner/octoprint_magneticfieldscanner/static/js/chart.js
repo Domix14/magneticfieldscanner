@@ -3,7 +3,7 @@ function refreshPlot(data) {
 }
 
 function plot(rawdata) {
-
+    console.log(rawdata)
     if (rawdata.length !== 0) {
         var layout = {
             width: 600,
