@@ -13,7 +13,7 @@ function updateGraph(rawdata) {
             marker: {
                 size: 3,
                 color: points.map(point => point.value),
-                colorscale: "Viridis",
+                colorscale: "Rainbow",
                 cmin: Math.min(...points.map(point => point.value)),
                 cmax: Math.max(...points.map(point => point.value)),
                 colorbar: { title: "Magnetic field strength [dBm]" }
@@ -64,10 +64,10 @@ function plot(rawdata) {
             marker: {
                 size: 3,
                 color: points.map(point => point.value),
-                colorscale: "Viridis",
+                colorscale: "Rainbow",
                 cmin: Math.min(...points.map(point => point.value)),
                 cmax: Math.max(...points.map(point => point.value)),
-                colorbar: { title: "Magnetic field strength [mT]" }
+                colorbar: { title: "Magnetic field strength [dBm]" }
             },
             type: 'scatter3d'
         };
@@ -110,10 +110,10 @@ function plot(rawdata) {
                     marker: {
                         size: 3,
                         color: points.map(point => point.value),
-                        colorscale: 'Viridis',
+                        colorscale: 'Rainbow',
                         cmin: Math.min(...points.map(point => point.value)),
                         cmax: Math.max(...points.map(point => point.value)),
-                        colorbar: { title: 'Magnetic field strength [mT]' }
+                        colorbar: { title: 'Magnetic field strength [dBm]' }
                     },
                     type: 'scatter3d'
                 }]
@@ -158,10 +158,10 @@ function plot(rawdata) {
             mode: 'markers',
             marker: {
                 size: 3,
-                colorscale: 'Viridis',
+                colorscale: 'Rainbow',
                 cmin: 0,
                 cmax: 0,
-                colorbar: { title: 'Magnetic field strength [mT]' }
+                colorbar: { title: 'Magnetic field strength [dBm]' }
             },
             type: 'scatter3d'
         };

@@ -8,17 +8,29 @@
         </div>
     </div>
 
-    <label class="control-label" for="settings-freq">Center frequency</label>
+    <label class="control-label" for="settings-freq">Center frequency [Mhz]</label>
     <div class="control-group">
         <div class="controls">
               <input data-bind="value: settings.plugins.magneticfieldscanner.scanner_freq" type="text" class="input-block-level id="settings-freq">
         </div>
     </div>
 
-    <label class="control-label" for="settings-window">Frequency window</label>
+    <label class="control-label" for="settings-window">Frequency window [Mhz] </label>
     <div class="control-group">
         <div class="controls">
               <input data-bind="value: settings.plugins.magneticfieldscanner.scanner_window" type="text" class="input-block-level id="settings-window">
+        </div>
+    </div>
+    <label class="control-label" for="settings-ref_level_offset">Ref level offset [dB]</label>
+    <div class="control-group">
+        <div class="controls">
+              <input data-bind="value: settings.plugins.magneticfieldscanner.scanner_ref_level_offset" type="text" class="input-block-level id="settings-ref_level_offset">
+        </div>
+    </div>
+    <label class="control-label" for="settings-RBW">RBW [Hz]</label>
+    <div class="control-group">
+        <div class="controls">
+              <input data-bind="value: settings.plugins.magneticfieldscanner.scanner_RBW" type="text" class="input-block-level id="settings-RBW">
         </div>
     </div>
 </form>

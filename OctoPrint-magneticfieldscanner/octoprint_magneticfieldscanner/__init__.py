@@ -56,7 +56,8 @@ class MagneticFieldScannerPlugin(
             "scanner_ip": "192.168.0.254",
             "connected": False,
             "points_count": 0,
-            "ref_level_offset":40,
+            "scanner_ref_level_offset":40,
+            "scanner_RBW":1000,
         }
 
     def get_template_configs(self):
@@ -89,8 +90,9 @@ class MagneticFieldScannerPlugin(
         ip = self._settings.get(["scanner_ip"])
         freq = self._settings.get_float(["scanner_freq"])
         window = self._settings.get_float(["scanner_window"])
-        ref_level_offset =40
-        result = self.scanner.connect(ip, freq, window,ref_level_offset)
+        ref_level_offset =self._settings.get_float(["scanner_ef_level_offset"])
+        RBW =self._settings.get_float(["scanner_ef_level_offset"])
+        result = self.scanner.connect(ip, freq, window,ref_level_offset,RBW)
         self._settings.set_boolean(["connected"], result)
         self._ping("connection_update", result)
 
@@ -140,7 +142,7 @@ class MagneticFieldScannerPlugin(
 
         words = return_cmd.split()
         # Remove words based on specified conditions
-        words = [word for word in words if not word.startswith(("E", "M104", "M109", "M140", "M190"))]
+        words = [word for word in words if not word.startswith(("E", "M104", "M109", "M140", "M190","G92"))]
         return_cmd = " ".join(words)+ " ; " + "ja tu byl"
             
 
