@@ -16,7 +16,7 @@ function updateGraph(rawdata) {
                 colorscale: "Viridis",
                 cmin: Math.min(...points.map(point => point.value)),
                 cmax: Math.max(...points.map(point => point.value)),
-                colorbar: { title: "Magnetic field strength [mT]" }
+                colorbar: { title: "Magnetic field strength [dBm]" }
             },
             type: 'scatter3d'
         };

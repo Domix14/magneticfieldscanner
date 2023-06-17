@@ -1,7 +1,7 @@
 import logging
 
 import pyvisa
-
+import time
 
 class Scanner:
     def __init__(self):
@@ -46,10 +46,15 @@ class Scanner:
         return self.connected
 
     def measure(self):
+        self.instr.write("CALC:TRAC1:CLE")
         self.instr.write("DISP:WIND1:TRAC1:Y:AUTO ON")
-        self.instr.write("INITiate:CONTinuous OFF")  # wyłącz ciągły pomiar
+        #self.instr.write("INITiate:CONTinuous OFF")  # wyłącz ciągły pomiar
         self.instr.write("CALC:MARK1:MAX")
+        self.instr.write("DISP:TRAC:MODE MAXH")
+        self.instr.write("SENSE:AVERAGE ON")
+        time.sleep(0.1)
         value = self.instr.query_ascii_values("CALC:MARK1:Y?")[0]
         freq = self.instr.query_ascii_values("CALC:MARK1:X?")[0]
-        self.instr.write("INITiate:CONTinuous ON")
+        #time.sleep(0.1)
+        #self.instr.write("INITiate:CONTinuous ON")
         return freq, value
