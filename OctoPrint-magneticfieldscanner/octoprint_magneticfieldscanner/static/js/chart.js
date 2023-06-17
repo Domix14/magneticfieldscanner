@@ -1,9 +1,31 @@
 function refreshPlot(data) {
-    plot(data);
+    updateGraph(data);
+}
+
+function updateGraph(rawdata) {
+    if (rawdata.length !== 0) {
+        var points = rawdata.slice().sort((a, b) => a.z - b.z);
+        var trace = {
+            x: points.map(point => point.x),
+            y: points.map(point => point.y),
+            z: points.map(point => point.z),
+            mode: 'markers',
+            marker: {
+                size: 3,
+                color: points.map(point => point.value),
+                colorscale: "Viridis",
+                cmin: Math.min(...points.map(point => point.value)),
+                cmax: Math.max(...points.map(point => point.value)),
+                colorbar: { title: "Magnetic field strength [mT]" }
+            },
+            type: 'scatter3d'
+        };
+
+        Plotly.react('myDiv', [trace]);
+    }
 }
 
 function plot(rawdata) {
-    console.log(rawdata)
     if (rawdata.length !== 0) {
         var layout = {
             width: 600,
