@@ -12,7 +12,7 @@ import pandas as pd
 from .plot_chart import Plot_3D
 from .scanner import Scanner
 
-
+from octoprint.settings import settings as s
 from octoprint.server import (  # noqa: F401
     app,
 )
@@ -48,6 +48,8 @@ class MagneticFieldScannerPlugin(
         self.position_z = None
         self.data = []
         self.counter = 0
+
+        s.set(["server", "maxSize"], 16777216) # Allow larger uploads
 
     def get_settings_defaults(self):
         return {
