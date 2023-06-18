@@ -49,7 +49,8 @@ class MagneticFieldScannerPlugin(
         self.data = []
         self.counter = 0
 
-        s.set(["server", "maxSize"], 16777216) # Allow larger uploads
+        settings = s()
+        settings.set(["server", "maxSize"], 16777216) # Allow larger uploads
 
     def get_settings_defaults(self):
         return {
