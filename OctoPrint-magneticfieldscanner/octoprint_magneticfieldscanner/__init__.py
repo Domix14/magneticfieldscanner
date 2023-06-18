@@ -64,13 +64,26 @@ class MagneticFieldScannerPlugin(
         return [{"type": "settings", "custom_bindings": False}]
 
     def get_api_commands(self):
-        return dict(delete_data=[], connect=[])
+        return dict(delete_data=[], connect=[], disconnect=[], upload_data=["data"])
 
     def on_api_command(self, command, data):
         if command == "connect":
             self.connect_scanner()
         elif command == "delete_data":
             self.delete_data()
+        elif command == "disconnect":
+            self.disconnect_scanner()
+        elif command == "upload_data":
+            self.upload_data(data)
+
+    def upload_data(self, data):
+        try:
+            self.data = data["data"]
+            self._ping("points_update", len(self.data))
+        except Exception as err:
+            self._logger.error(err)
+
+
 
     def on_api_get(self, request):
         return flask.Response(json.dumps(self.data), mimetype="application/json")
@@ -95,6 +108,10 @@ class MagneticFieldScannerPlugin(
         result = self.scanner.connect(ip, freq, window,ref_level_offset,RBW)
         self._settings.set_boolean(["connected"], result)
         self._ping("connection_update", result)
+
+    def disconnect_scanner(self):
+        self._ping("connection_update", False)
+        self.scanner.disconnect()
 
     def get_update_information(self):
         return dict(

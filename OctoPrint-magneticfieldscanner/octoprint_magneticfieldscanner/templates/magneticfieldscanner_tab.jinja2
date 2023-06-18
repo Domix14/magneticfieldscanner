@@ -1,19 +1,45 @@
 <script src="{{ url_for("static", filename="js/lib/jquery/jquery.min.js") }}"></script>
 <script src="{{ url_for("static", filename="js/lib/lodash.min.js") }}"></script>
 <script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
+<script src="https://cdn.rawgit.com/Keyang/node-csvtojson/d41f44aa/browser/csvtojson.min.js"></script>
 
 <h1>Magnetic Field Scanner</h1>
 
 <div>
     Visa connection status: <span style="color: red" data-bind="visible: !connected()">OFFLINE</span><span style="color: green" data-bind="visible: connected()">ONLINE</span>
 
-    <button style="width: 30%;float: right;" class="btn btn-primary" data-bind="click: function() { $root.sendCommand('connect') }">Connect</button>
+    <button style="width: 30%;float: right;" class="btn btn-primary" data-bind="visible: !connected(), click: function() { $root.sendCommand('connect') }">Connect</button>
+    <button style="width: 30%;float: right;" class="btn btn-primary" data-bind="visible: connected(), click: function() { $root.sendCommand('disconnect') }">Disconnect</button>
 </div>
 <div style="margin-top: 20px;display: flex;justify-content: right;gap: 3px;align-items: center;">
     <div style="margin-right: auto" >Measured points: <span data-bind="text: points()"></span></div> 
     <button class="btn control-box" data-bind="click: function() { $root.updateChart() }">Update chart</button>
     <button class="btn control-box" data-bind="click: function() { $root.exportData() }">Export data</button>
     <button class="btn control-box" data-bind="click: function() { $root.deleteData() }">Delete data</button>
+    <button class="btn control-box" data-bind="click: function() { $root.uploadModal.modal() }">Upload data</button>
 </div>
 
+<div id="plugins_magneticfieldscanner_upload" class="modal hide fade-in">
+    <div class="modal-header">
+        <a href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+        <h3>{{ _('Upload data from CSV file...') }}</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-inline" onsubmit="return false;">
+            <div class="control-group row-fluid"">
+                <div class="input-prepend span9">
+                    <span class="btn fileinput-button">
+                        <span>{{ _('Browse...') }}</span>
+                        <input id="plugins_magneticfieldscanner_upload_text" type="file" name="file" accept=".csv" data-url="/api/plugin/magneticfieldscanner/upload_data") }}">
+                    </span>
+                    <span class="add-on add-on-limited text-left" data-bind="text: uploadFilename()"></span>
+                </div>
+                <button id="plugins_magneticfieldscanner_upload_start" class="btn btn-primary span3">{{ _('Upload') }}</button>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">{{ _('Close') }}</button>
+    </div>
+</div>
 <div id="myDiv"></div>

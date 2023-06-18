@@ -1,40 +1,97 @@
 
 $(function () {
     function MagneticFieldScannerViewModel(parameters) {
-        this.allSettings = parameters[0]
+        var self = this
+        self.allSettings = parameters[0]
 
 
-        this.loginState = parameters[1];
-        this.printerState = parameters[2];
-        this.confirmation = undefined;
-        this.connected = ko.observable(false)
-        this.points = ko.observable(0)
-        this.data = []
+        self.loginState = parameters[1];
+        self.printerState = parameters[2];
+        self.confirmation = undefined;
+        self.connected = ko.observable(false)
+        self.points = ko.observable(0)
+        self.uploadFilename = ko.observable();
+        self.data = []
 
-        this.onAfterBinding = function () { };
-        this.onBeforeBinding = function () {
-            this.confirmation = $("#confirmation");
-            this.settings = this.allSettings.settings
+        self.uploadModal = $(
+            "#plugins_magneticfieldscanner_upload"
+        );
 
-            this.connected(this.settings.plugins.magneticfieldscanner.connected())
-            this.points(this.settings.plugins.magneticfieldscanner.points_count())
+        self.uploadElement = $(
+            "#plugins_magneticfieldscanner_upload_text"
+        );
 
-            // this.updateChart();
+        self.uploadButton = $(
+            "#plugins_magneticfieldscanner_upload_start"
+        );
+
+        self.onAfterBinding = function () { };
+        self.onBeforeBinding = function () {
+            self.confirmation = $("#confirmation");
+            self.settings = self.allSettings.settings
+
+            self.connected(self.settings.plugins.magneticfieldscanner.connected())
+            self.points(self.settings.plugins.magneticfieldscanner.points_count())
+
+
+            // self.updateChart();
+            self.uploadModal.modal("hide")
         };
 
-        this.deleteData = function () {
-            this.sendCommand('delete_data')
-            this.data = []
-            this.points(0)
-            refreshPlot(this.data);
+        self.deleteData = function () {
+            self.sendCommand('delete_data')
+            self.data = []
+            self.points(0)
+            refreshPlot(self.data);
         }
 
-        this.exportData = function () {
-            // this is stupid but works
+        self.uploadElement.fileupload({
+            dataType: "json",
+            maxNumberOfFiles: 1,
+            autoUpload: false,
+            add: function (e, data) {
+                if (data.files.length == 0) {
+                    return false;
+                }
+
+                self.uploadFilename(data.files[0].name);
+
+                self.uploadButton.unbind("click");
+                self.uploadButton.bind("click", function () {
+                    var f = data.files[0];
+                    if (f) {
+                        var r = new FileReader();
+                        r.onload = function (e) {
+                            var contents = e.target.result;
+                            csv()
+                                .fromString(contents)
+                                .then((jsonObj) => {
+                                    self.uploadData(jsonObj)
+                                })
+                        }
+                        r.readAsText(f);
+
+                    }
+                    return false;
+                });
+            },
+            done: function (e, data) {
+                self.uploadButton.unbind("click");
+                // self.uploadFilename(undefined);
+                // self.fromTranslationResponse(data.result);
+            },
+            fail: function (e, data) {
+                self.uploadButton.unbind("click");
+                // self.uploadFilename(undefined);
+            }
+        });
+
+        self.exportData = function () {
+            // self is stupid but works
             window.location = API_BASEURL + "/plugin/magneticfieldscanner/export_data"
         }
 
-        this.sendCommand = function (command) {
+        self.sendCommand = function (command) {
             $.ajax({
                 url: API_BASEURL + "plugin/magneticfieldscanner",
                 type: "POST",
@@ -47,25 +104,39 @@ $(function () {
             });
         };
 
-        this.updateChart = function () {
+        self.uploadData = function (data) {
+            $.ajax({
+                url: API_BASEURL + "plugin/magneticfieldscanner",
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify({
+                    command: "upload_data",
+                    data: data
+                }),
+                contentType: "application/json;",
+                success: function (data, status) { }
+            });
+        };
+
+        self.updateChart = function () {
             $.ajax({
                 url: API_BASEURL + "/plugin/magneticfieldscanner",
                 type: "GET",
                 dataType: "json",
                 contentType: "application/json; charset=UTF-8",
                 success: (data, status) => {
-                    this.data = data
-                    refreshPlot(this.data)
+                    self.data = data
+                    refreshPlot(self.data)
                 }
             });
         }
 
-        this.onDataUpdaterPluginMessage = function (plugin, data) {
+        self.onDataUpdaterPluginMessage = function (plugin, data) {
             if (data.type == "connection_update") {
-                this.connected(data.value)
+                self.connected(data.value)
             }
             else if (data.type == "points_update") {
-                this.points(data.value)
+                self.points(data.value)
             }
         };
     };

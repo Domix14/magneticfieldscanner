@@ -49,6 +49,14 @@ class Scanner:
 
         return self.connected
 
+    def disconnect(self):
+        try:
+            self.rm.close()
+        except Exception as err:
+            logging.error(f"Error while closing PyVisa connection: {err}")
+
+        self.connected = False
+
     def measure(self):
         self.instr.write("CALC:TRAC1:CLE")
         self.instr.write("DISP:WIND1:TRAC1:Y:AUTO ON")
