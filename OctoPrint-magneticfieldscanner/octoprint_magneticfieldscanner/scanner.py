@@ -34,7 +34,6 @@ class Scanner:
             )  # set the stop frequency
             # define an S21 measurement named "MyMeasurement"
             self.instr.write(f"SENS:BWID {self.RBW} Hz")
-            self.instr.write('CALC:PAR:DEF:EXT "MyMeasurement",s12')
             self.instr.write("CALC:MARK:AOFF")
             self.instr.write("CALC:MARK1:STAT ON")
             # # Set the analyzer to continuous measurement mode

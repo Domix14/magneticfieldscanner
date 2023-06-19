@@ -7,7 +7,7 @@ function updateGraph(rawdata) {
         var points = rawdata.slice().sort((a, b) => a.z - b.z);
         var minValue = Math.min(...points.map(point => point.value));
         var maxValue = Math.max(...points.map(point => point.value));
-        
+
         var trace = {
             x: points.map(point => point.x),
             y: points.map(point => point.y),
@@ -20,13 +20,20 @@ function updateGraph(rawdata) {
                 cmin: minValue,
                 cmax: maxValue,
                 colorbar: {
-                    title: "Magnetic field strength [dBm]",                   
+                    title: "Magnetic field strength [dBm]",
                 }
             },
             type: 'scatter3d'
         };
 
-        Plotly.react('myDiv', [trace]);    }
+        Plotly.react('myDiv', [trace], {
+            scene: {
+                xaxis: { title: 'X [mm]' },
+                yaxis: { title: 'Y [mm]' },
+                zaxis: { title: 'Z [mm]' },
+            },
+        });
+    }
 }
 
 function plot(rawdata) {
@@ -150,8 +157,13 @@ function plot(rawdata) {
                     transition: { duration: 500 },
                     steps: steps
                 }],
-            },
-            frames: frames
+                scene: {
+                    xaxis: { title: 'X [mm]' },
+                    yaxis: { title: 'Y [mm]' },
+                    zaxis: { title: 'Z [mm]' },
+                },
+                frames: frames
+            }
         })
     } else {
         // Kod dla braku danych
@@ -171,8 +183,16 @@ function plot(rawdata) {
         };
 
         Plotly.newPlot('myDiv', {
-            data: [data]
-        });
+            data: [data],
+            layout: {
+                scene: {
+                    xaxis: { title: 'X [mm]' },
+                    yaxis: { title: 'Y [mm]' },
+                    zaxis: { title: 'Z [mm]' },
+                },
+            }
+        })
+
     }
 }
 

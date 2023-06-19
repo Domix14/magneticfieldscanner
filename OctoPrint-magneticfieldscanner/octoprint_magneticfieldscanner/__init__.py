@@ -9,7 +9,6 @@ import csv
 import octoprint.plugin
 import threading
 import pandas as pd
-from .plot_chart import Plot_3D
 from .scanner import Scanner
 
 from octoprint.settings import settings as s
@@ -163,7 +162,7 @@ class MagneticFieldScannerPlugin(
         words = return_cmd.split()
         # Remove words based on specified conditions
         words = [word for word in words if not word.startswith(("E", "M104", "M109", "M140", "M190","G92"))]
-        return_cmd = " ".join(words)+ " ; " + "ja tu byl"
+        return_cmd = " ".join(words)
             
 
         if gcode == "G0" or gcode == "G1" or gcode == "G2":
