@@ -9,7 +9,6 @@ import csv
 import octoprint.plugin
 import threading
 import pandas as pd
-from .plot_chart import Plot_3D
 from .scanner import Scanner
 
 from octoprint.settings import settings as s
