@@ -25,22 +25,25 @@ class Scanner:
             self.instr = self.rm.open_resource(f"TCPIP0::{self.ip}::INSTR")
 
             self.instr.write("*RST")
-            # # Select the measurement parameters you want to measure
+            # Send the command to reset the instrument
+
+            # Select the measurement parameters you want to measure
             self.instr.write(
                 f"SENS:FREQ:START {self.freq - self.window}MHz"
-            )  # set the start frequency
+            )  # Set the start frequency for the measurement
             self.instr.write(
                 f"SENS:FREQ:STOP {self.freq + self.window}MHz"
-            )  # set the stop frequency
-            # define an S21 measurement named "MyMeasurement"
-            self.instr.write(f"SENS:BWID {self.RBW} Hz")
-            self.instr.write("CALC:MARK:AOFF")
-            self.instr.write("CALC:MARK1:STAT ON")
-            # # Set the analyzer to continuous measurement mode
-            self.instr.write("INITiate:CONTinuous ON")  # turn on continuous measurement
+            )  # Set the stop frequency for the measurement
+            self.instr.write(f"SENS:BWID {self.RBW} Hz")  # Set the measurement bandwidth
+            self.instr.write("CALC:MARK:AOFF")  # Turn off the active marker
+            self.instr.write("CALC:MARK1:STAT ON")  # Turn on MARK1 marker
+
+            # Set the analyzer to continuous measurement mode
+            self.instr.write("INITiate:CONTinuous ON")  # Turn on continuous measurement
 
             self.instr.write(f"DISP:WIND:TRAC:Y:RLEV:OFFS {self.ref_level_offset}")
-            
+            # Set the reference level offset for the display
+
             self.connected = True
         except Exception as err:
             logging.error(f"Error while initializing PyVisa: {err}")
@@ -63,6 +66,8 @@ class Scanner:
 
         # Find and mark the maximum value on the trace
         self.instr.write("CALC:MARK1:MAX")
+
+        # Set max hold mode
         self.instr.write("DISP:TRAC:MODE MAXH")
 
         # Enable averaging
