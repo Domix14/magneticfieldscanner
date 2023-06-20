@@ -59,8 +59,7 @@ class Scanner:
     def measure(self):
         self.instr.write("CALC:TRAC1:CLE")
         self.instr.write("DISP:WIND1:TRAC1:Y:AUTO ON")
-        
-        #self.instr.write("INITiate:CONTinuous OFF")  # wyłącz ciągły pomiar
+
         self.instr.write("CALC:MARK1:MAX")
         self.instr.write("DISP:TRAC:MODE MAXH")
         self.instr.write("SENSE:AVERAGE ON")
