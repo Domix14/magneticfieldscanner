@@ -57,16 +57,24 @@ class Scanner:
         self.connected = False
 
     def measure(self):
+        # Clear the trace and enable auto-scaling for the Y-axis
         self.instr.write("CALC:TRAC1:CLE")
         self.instr.write("DISP:WIND1:TRAC1:Y:AUTO ON")
 
+        # Find and mark the maximum value on the trace
         self.instr.write("CALC:MARK1:MAX")
         self.instr.write("DISP:TRAC:MODE MAXH")
+
+        # Enable averaging
         self.instr.write("SENSE:AVERAGE ON")
-        
+
         time.sleep(0.1)
+
+        # Query the Y-value (measurement value) of the marked maximum
         value = self.instr.query_ascii_values("CALC:MARK1:Y?")[0]
+
+        # Query the X-value (frequency) of the marked maximum
         freq = self.instr.query_ascii_values("CALC:MARK1:X?")[0]
-        #time.sleep(0.1)
-        #self.instr.write("INITiate:CONTinuous ON")
         return freq, value
+
+
